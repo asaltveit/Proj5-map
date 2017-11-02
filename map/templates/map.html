@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Map</title>
+	<!-- Leaflet -->
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+    <!-- Geocoding 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+
+	<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key={{g.dev_key}}"></script>
+	<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-geocoding.js?key={{g.dev_key}}"></script>
+ 	
+ 	<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key={{g.dev_key}}"></script>
+	-->
+
+	<!-- Javascript:  JQuery from a content distribution network (CDN) -->
+  	<script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+  	</script>
+
+  <!-- Bootstrap includes javascript and css  (must follow jquery) -->
+	<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
+	</script>
+
+
+	
+</head>
+<body>
+
+
+
+<div id="mapid" style="width: 1100px; height: 600px;"></div>
+<script>
+	//import geocoder
+	var mymap = L.map('mapid').setView([44.051515, -123.086161], 13);
+		//layers: MQ.mapLayer(),
+		//center: [44.051515, -123.086161],
+		//zoom: 13 });
+		//).setView([44.051515, -123.086161], 13);
+	//geocode = MQ.geocode().on('success', function(e) {
+        //popup.setContent(geocode.describeLocation(e.result.best));
+    //});
+
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={{g.dev_key}}', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+		id: 'mapbox.streets'
+	}).addTo(mymap);
+
+	//geocode = L.geocode().on('success', function(e) {
+  		//popup.setContent(geocode.describeLocation(e.result.best));
+	//});
+
+	{% for entry in g.points%}
+		var lat = {{entry['lat']}};
+		var lon = {{entry['lon']}};
+		var title = "{{entry['title']}}";
+		L.marker([lat, lon]).addTo(mymap).bindPopup("<b>{{entry['title']}}</b>"); 
+	{% endfor %}
+
+
+	var popup = L.popup(), geocode, map;
+
+	function onMapClick(e) {
+		// delete button courtesy of Kedar.Aitawdekar on StackOverflow
+		var marker = new L.marker(e.latlng).addTo(mymap);
+		
+		popup
+			.setLatLng(e.latlng)
+			.setContent("You clicked the map at " + e.latlng.toString() + "<input type='button' value='Delete marker' class='marker-delete-button'/>")
+			.openOn(mymap)
+			.on("popupopen", onPopupOpen(marker));
+	}
+
+	function onPopupOpen(marker) {
+		// courtesy of Kedar.Aitawdekar on StackOverflow
+	    console.log(marker);
+	    var tempMarker = this;
+	    console.log(tempMarker);
+	    // removes marker after delete button clicked
+	    $('.marker-delete-button:visible').click(function () {
+	        map.remove(marker);
+	        // Layer
+	    });
+	}
+
+	mymap.on('click', onMapClick);
+
+	
+
+</script>
+
+
+
+</body>
+</html>

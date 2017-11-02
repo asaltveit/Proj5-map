@@ -5,7 +5,5 @@ Implemented Leaflet.js draggable map
 ## Author: Anna Saltveit
 
 ## Can:
-Drag map
-Click to put markers on map
-See points of interest
-# Proj5-map
+Drag map, click to put markers on map, see points of interest
+
